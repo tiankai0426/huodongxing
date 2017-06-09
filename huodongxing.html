@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <link rel="stylesheet" href="css/jquery.datetimepicker.css">
+    <link rel="stylesheet" href="css/imgareaselect-default.css">
+    <style>
+        .container{
+            margin-top:100px;
+        }
+        #dispicker select.form-control {
+            width:46%;
+            display: inline-block;
+
+        }
+        #dispicker select.form-control:first-child{
+            margin-right:6%;
+        }
+        #allmap {
+            width:560px;
+            height:360px;
+            border:1px solid #ddd;
+            display: none;
+            position:absolute;
+            z-index:100;
+        }
+        #searchResultPanel {
+            border:1px solid #C0C0C0;
+            width:150px;
+            height:auto;
+            display:none;
+        }
+        .input-group .form-control{
+            top:1px;
+        }
+        .startTime,.endTime {
+            display: inline-block;
+            margin-top:6px;
+            margin-bottom:10px;
+        }
+        span.tipMes {
+            color:#999;
+        }
+        #my_file {
+            visibility:hidden;
+            opacity:0;
+        }
+        #target img {
+            max-width:100%;
+        }
+        #target img.hide {
+            position:absolute;
+            z-index:-1;
+            visibility:hidden;
+        }
+        .modal-header .close {
+            margin-top:-10px;
+        }
+        .modal-body {
+            padding-top:11px;
+            padding-left:0;
+        }
+        .jcrop-holder {
+            width: 800px;
+            height: 450px;
+            position: relative;
+            background-color: black;
+        }
+        #myImg {
+            text-align: center;
+            width: 804px;
+            height: 454px;
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            z-index: 290;
+            cursor: crosshair;
+        }
+        #myImg img{
+            max-width:100%;
+            max-height:100%;
+        }
+        #active_catrgory ,#category_item {
+            padding-top:12px;
+        }
+        .info-sign {
+            font-size:20px;
+            font-weight:normal;
+            color:#999;
+            margin-left:20px;
+            top:6px;
+            cursor:pointer;
+        }
+        .col-sm-10:before {
+            content:"";
+            display: table;
+        }
+        .info-sign-detail {
+            background:#5E5E5E;
+            color: #ffffff;
+            display: inline-block;
+
+            border-radius:5px;
+            font-size:1rem;
+            opacity:0;
+            visibility: hidden;
+            -webkit-transition: opacity 0.3s linear;
+            -moz-transition: opacity 0.3s linear;
+            -ms-transition: opacity 0.3s linear;
+            -o-transition: opacity 0.3s linear;
+            transition: opacity 0.3s linear;
+            cursor:pointer;
+        }
+        .set_ticket .info-sign {
+            margin-left:15px;
+        }
+        .set_ticket .info-sign-detail{
+            position: absolute;
+            z-index:100;
+        }
+        .set_ticket .info-sign-detail.o {
+            /*right: -11rem;*/
+            bottom: -4rem;
+            padding-bottom:10px;
+            padding:8px 10px;
+        }
+        .set_ticket .table-header.ticket_header {
+            margin-top:3rem;
+        }
+        .set_ticket .table-header label.control-label {
+            text-align:center;
+        }
+        .set_ticket .table-header.ticket_header .col-sm-10{
+            background:#EEEEEE;
+        }
+        .set_ticket .table-header .col-sm-10{
+            overflow:hidden;
+        }
+        .set_ticket .table-header:last-child .col-sm-10{
+
+            border:none;
+        }
+       button.add_free_ticket,button.add_charge_ticket{
+            min-width:96px;
+            background:#EEEEEE;
+        }
+        .set_ticket .table-header .col-sm-10 {
+            border:1px solid #ddd;
+            padding:10px 0;
+            line-height:30px;
+        }
+        .set_ticket .table-header.free_ticket_button .col-sm-10{
+            border:none;
+        }
+        .set_ticket .table-header .col-20{
+            float:left;
+            width:20%;
+            border-right:1px solid #ddd;
+        }
+        .set_ticket .table-header .col-10:not(:last-child) {
+            width:10%;
+            float:left;
+            border-right:1px solid #ddd;
+        }
+        .set_ticket .table-header>label{
+            padding-top:12px;
+        }
+        .event_ticket_detail{
+            padding:1rem;
+        }
+        .event_ticket_detail .form-inline{
+            margin-top:3rem;
+            margin-left:1rem;
+        }
+        .event_ticket_detail .form-inline label {
+            width:10%;
+            padding-top:1rem;
+            display: inline-block;
+            vertical-align: bottom;
+        }
+        .event_ticket_detail .form-inline input[type=text] {
+            width:80%;
+            margin-left:1rem;
+        }
+        #category_box ,#category_item_box {
+            border:1px solid #ddd;
+            padding: 20px 30px 0px;
+            position:absolute;
+            z-index:1000;
+            background:#fff;
+            box-sizing: border-box;
+        }
+        #category_box ul li ,#category_item_box ul li{
+            list-style:none;
+            border: 1px dashed #a0a0a0;
+            color: #a0a0a0;
+            padding: 4px 20px;
+            float: left;
+            margin-right: 9px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        #category_box ul li.active ,#category_item_box ul li.active{
+            background: #e5e5e5 none repeat scroll 0 0;
+            cursor: default;
+        }
+        #category_box:after,.topUl ul:after,.bottomUl ul:after,#category_item_box:after{
+            content:'';
+            display: block;
+            clear:both;
+        }
+        .selectClick ,.itemClick{
+            display: inline-block;
+            padding-left:10px;
+        }
+
+        .selectClick li ,.itemClick li{
+            margin-right:15px;
+            border: 1px dashed #a0a0a0;
+            color: #a0a0a0;
+            padding: 4px 20px;
+            background: #e5e5e5 none repeat scroll 0 0;
+            position:relative;
+           
+        }
+        .selectClick li span,.itemClick li span {
+            position: absolute;
+            top:-10px;
+            right: -10px;
+            font-size:20px;
+            color:#999;
+            display: inline-block;
+            width:20px;
+            height:20px;
+        }
+        .remove_item:hover{
+            cursor:pointer;
+            transform: scale(1.2);
+        }
+        .expand {
+            height:30px;
+            line-height:30px;
+        }
+        .expand input[type=checkbox] {
+            width:20px;
+            height:20px;
+            vertical-align: top;
+        }
+        .expand input[type=checkbox]:checked::before{
+            content:"";
+            display: block;
+            background:#00dd1c;
+        }
+        .help-explain {
+            color:#999;
+        }
+        .saveInfo {
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+        .add_info {
+            height: 40px;
+            line-height: 48px;
+        }
+        .form-horizontal {
+            padding-right: 80px;
+        }
+        div.aside .row {
+            margin-bottom:10px;
+        }
+        div.aside button>span.glyphicon:first-child {
+            float:left  ;
+        }
+        div.bottom-form span.add_plus {
+            float:right;
+        }
+        .set_form,.set_ticket{
+            width:90%;
+            margin-left:auto;
+            margin-right:auto;
+            padding-top:8px;
+            padding-bottom:8px;
+        }
+        .ticket_num input,.free_ticket input,.ticket_price input{
+            width:50%;
+            text-align:center;
+        }
+        .form-horizontal.set_form:hover{
+            background:#ddd;
+        }
+        .set_form_content {
+            display: none;
+        }
+        .set_form_content.active {
+            display: block;
+        }
+        #create-form {
+            margin-right:-15px;
+            margin-left:-15px;
+            margin-bottom:15px;
+        }
+        #create-form .form-group {
+            height: auto;
+            line-height: 35px;
+        }
+        #create-form .form-group>.col-sm-7{
+            padding-top: 7px;
+        }
+        #create-form .form-group>.col-sm-1{
+            padding-top:6px;
+            padding-left:0;
+        }
+        #create-form .form-group .row .glyphicon-remove-circle {
+            position: absolute;
+            top: -5px;
+            right: 10px;
+            font-size: 1.6rem;
+        }
+        #create-form .form-group .row>.col-sm-3 {
+            margin-bottom:1.5rem;
+        }
+        @media screen and (max-width:790px) {
+            input,select,.input-group{
+                margin-bottom:10px;
+            }
+        }
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=IrSFeM72IGdf4UDidXig4uPy7Czhm68r"></script>
+</head>
+<body>
+<div class="container">
+    <form class="form-horizontal" style="padding-top:30px;">
+        <div class="form-group">
+            <label class="control-label col-sm-2">活动主题</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control"  maxlength="100" minlength="5" placeholder="请输入活动标题（不少于5个字）"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">选择地点</label>
+            <div id="dispicker" class="col-sm-4" data-toggle="distpicker" data-autoselect="2" data-province="山西省">
+                <select class="form-control" id="province"></select>
+                <select class="form-control" id="city"></select>
+            </div>
+            <div class="col-sm-6" id="activePos">
+                <input type="text" id="suggestId" placeholder="例如：山西省太原市小店区晋阳街长治路口天骄科技园" class="form-control">
+                <div id="searchResultPanel"></div>
+                <div id="allmap"></div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">活动时间</label>
+            <div class="col-sm-5">
+                <span class="startTime">开始时间:</span>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="input-group">
+                            <span class="input-group-addon glyphicon glyphicon-calendar"></span>
+                            <input type="text" class="form-control" id="datePickerStart"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="input-group">
+                            <span class="input-group-addon glyphicon glyphicon-time"></span>
+                            <input type="text" class="form-control" id="timePickerStart"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <span class="endTime">结束时间：</span>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="input-group">
+                            <span class="input-group-addon glyphicon glyphicon-calendar"></span>
+                            <input type="text" class="form-control" id="datePickerEnd" />
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="input-group">
+                            <span class="input-group-addon glyphicon glyphicon-time"></span>
+                            <input type="text" class="form-control"  id="timePickerEnd"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">上传海报：</label>
+            <div class="col-sm-6" id="target">
+                <img src="img/event-create-poster-holder.png" >
+            </div>
+            <div class="col-sm-4">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label for="my_file" class="btn btn-success btn-lg">
+                            <span class="glyphicon glyphicon-upload"></span>
+                            <span class="upload_img">上传图片</span>
+                        </label>
+                        <input id="my_file" type="file" accept=".jpg,.jpeg,.gif,.png,.webp">
+                        </input>
+                        
+                    </div>
+                    <div class="col-sm-12">
+                        <span class="tipMes">温馨提示：一张漂亮的海报，能让你的活动锦上添花，带来更多用户报名
+                        及增加传播效果，也将影响其在活动行App被推荐的几率！
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">活动人数</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control"  maxlength="100" minlength="5" placeholder="100"/>
+            </div>
+        </div>
+        <div class="form-group act_items">
+            <label class="control-label col-sm-2" id="active_catrgory">活动分类</label>
+            <div class="col-sm-10">
+                <button type="button" class="btn btn-default btn-lg single" >
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+                <ul class="selectClick list-inline">
+                    <!--<li>会议
+                        <span class="glyphicon glyphicon-remove-circle"></span>
+                    </li>-->
+                </ul>
+                <i class="glyphicon glyphicon-info-sign info-sign"></i>
+                <span class="info-sign-detail">
+                    添加合适的活动类别和活动形式有利于用户在站内、站外发现您的活动
+                </span>
+                <div id="category_box" class="collapse">
+                    <div class="topUl">
+                        <h4>活动类别：</h4>
+                        <ul>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li><li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+
+                        </ul>
+                    </div>
+                    <div class="bottomUl">
+                        <h4>活动形式：</h4>
+                        <ul>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li><li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group act_items">
+            <label class="control-label col-sm-2" id="category_item">添加标签</label>
+            <div class="col-sm-10">
+                <!--role="button" data-toggle="collapse" data-target="#category_item_box"
+                aria-expanded="false" aria-controls="category_box"-->
+                <button type="button" class="btn btn-default btn-lg single" >
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+                <ul class="itemClick list-inline">
+                    <!--<li>会议
+                        <span class="glyphicon glyphicon-remove-circle"></span>
+                    </li>-->
+                </ul>
+                <i class="glyphicon glyphicon-info-sign info-sign"></i>
+                <span class="info-sign-detail">
+                    添加合适的标签有利于用户在站内、站外发现您的活动， 最多添加五个标签
+                </span>
+                <div  class="collapse" id="category_item_box">
+                        <ul style="overflow:hidden; padding-left: 18px;padding-top:10px;">
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li><li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li><li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li><li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                            <li>创业</li>
+                            <li>公益</li>
+                            <li>亲子</li>
+                        </ul>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label  class="control-label col-sm-2">
+                活动推广
+            </label>
+            <div class="col-sm-10 expand">
+                <input type="checkbox"/>
+                <span class="help-text">请活动行协助推广</span>
+                <span class="help-explain">(在【活动行】网站公开展示，例如主页、发现页、专题、APP等。<a href="">查看获得活动行推广的条件</a> )</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">
+                详细内容
+            </label>
+            <div class="col-sm-10">
+                <script id="editor" type="text/plain" style="width:100%;height:400px;"></script>
+            </div>
+        </div>
+        <div class="form-group saveInfo">
+            <button class="btn btn-success pull-right ">
+                保存信息
+            </button>
+        </div>
+    </form>
+    <hr/>
+    <div class="form-horizontal set_form">
+        <div class="form-group ">
+            <label class="control-label col-sm-2 col-sm-offset-1">
+                <div class="btn btn-success">设置报名表单</div>
+            </label>
+            <div class="col-sm-9">
+                <div class="text-center add_info" >
+                    <i class="glyphicon glyphicon-plus"></i>
+                    如果您需要收集报名者的必要信息，可 <strong class="text-info">添加此项设置 </strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-horizontal set_form_content">
+        <div class="form-group set_form">
+            <label class="control-label col-sm-2 col-sm-offset-1">
+                <div class="btn btn-success">设置报名表单</div>
+            </label>
+        </div>
+        <div class="form-group">
+            <div class="control-label col-sm-5">
+                <h3>联系方式 <strong>报名用户注册资料（必填）</strong></h3>
+            </div>
+        </div>
+       <div class="col-sm-9">
+           <hr/>
+           <div class="form-group">
+               <label class="control-label col-sm-2">
+                   <input type="checkbox" checked disabled>
+                   必填
+               </label>
+               <label class="control-label col-sm-2 text-center">
+                   <span>姓名</span>
+               </label>
+               <div class="col-sm-8">
+
+                   <input type="text" class="form-control" placeholder="请输入用户名或昵称" disabled>
+               </div>
+           </div>
+           <div class="form-group">
+               <label class="control-label col-sm-2">
+                   <input type="checkbox" checked disabled>
+                   必填
+               </label>
+               <label class="control-label col-sm-2 text-center">
+                   <span>手机号</span>
+               </label>
+               <div class="col-sm-8">
+
+                   <input type="text" class="form-control" placeholder="报名用户手机号" disabled>
+               </div>
+           </div>
+           <div class="form-group">
+               <label class="control-label col-sm-2">
+                   <input type="checkbox" checked disabled>
+                   必填
+               </label>
+               <label class="control-label col-sm-2 text-center">
+                   <span>电子邮箱</span>
+               </label>
+               <div class="col-sm-8">
+
+                   <input type="text" class="form-control" placeholder="报名用户的电子邮箱" disabled>
+               </div>
+           </div>
+           <hr/>
+           <div class="form-group">
+               <div class="control-label col-sm-2">
+                   <h3>其他</h3>
+               </div>
+           </div>
+           <div class="form-group">
+               <div class="control-label col-sm-7">
+                   <p>未添加其他栏位（即不需要报名/购票人提供额外信息）。</p>
+               </div>
+           </div>
+
+           <!--添加的表单-->
+           <div  id="create-form">
+<!--
+                <div class="form-group">
+                    <label class="control-label col-sm-2">
+                        <input type="checkbox" >
+                        必填
+                    </label>
+                    <label class="control-label col-sm-2 text-center">
+                        <input type="text" class="form-control" value="公司">
+                    </label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" placeholder="提示信息写这里">
+                    </div>
+                    <div class="col-sm-1">
+                        <span class="glyphicon glyphicon-trash btn btn-default"></span>
+                    </div>
+                </div>
+
+               <div class="form-group">
+                   <label class="control-label col-sm-2">
+                       <input type="checkbox" >
+                       必填
+                   </label>
+                   <label class="control-label col-sm-2 text-center">
+                       <input type="text" class="form-control" value="学历">
+                   </label>
+                   <div class="col-sm-7">
+                       <input type="text" class="form-control" placeholder="提示信息写这里">
+                   </div>
+                   <div class="col-sm-1">
+                       <span class="glyphicon glyphicon-trash btn btn-default"></span>
+                   </div>
+                   <div class="col-sm-7 col-sm-offset-2">
+                       选项列表
+                       <div class="row">
+                           <div class="col-sm-3">
+                               <input type="text" class="form-control" value="小学">
+                               <span class="glyphicon glyphicon-remove-circle"></span>
+                           </div>
+                           <div class="col-sm-3">
+                               <input type="text" class="form-control" value="初中">
+                               <span class="glyphicon glyphicon-remove-circle"></span>
+                           </div>
+                           <div class="col-sm-3">
+                               <input type="text" class="form-control" value="高中">
+                               <span class="glyphicon glyphicon-remove-circle"></span>
+                           </div>
+                           <div class="col-sm-3">
+                               <input type="text" class="form-control" value="大学">
+                               <span class="glyphicon glyphicon-remove-circle"></span>
+                           </div>
+                           <div class="col-sm-3">
+                               <input type="text" class="form-control" value="研究生">
+                               <span class="glyphicon glyphicon-remove-circle"></span>
+                           </div>
+                           <div class="col-sm-3">
+                               <button class="btn btn-default btn-md">
+                                   <span class="glyphicon glyphicon-plus"></span>
+                               </button>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <div class="form-group">
+                   <label class="control-label col-sm-2">
+                       <input type="checkbox" >
+                       必填
+                   </label>
+                   <label class="control-label col-sm-2 text-center">
+                       <input type="text" class="form-control" value="公司">
+                   </label>
+                   <div class="col-sm-7">
+                       <input type="text" class="form-control" placeholder="提示信息写这里">
+                   </div>
+                   <div class="col-sm-1">
+                       <span class="glyphicon glyphicon-trash btn btn-default"></span>
+                   </div>
+               </div>
+               <div class="form-group">
+                   <label class="control-label col-sm-2">
+                       <input type="checkbox" >
+                       必填
+                   </label>
+                   <label class="control-label col-sm-2 text-center">
+                       <input type="text" class="form-control" value="公司">
+                   </label>
+                   <div class="col-sm-7">
+                       <input type="text" class="form-control" placeholder="提示信息写这里">
+                   </div>
+                   <div class="col-sm-1">
+                       <span class="glyphicon glyphicon-trash btn btn-default"></span>
+                   </div>
+               </div>-->
+           </div>
+
+
+           <div class="form-group">
+               <div style="margin-bottom:10px;"  class="control-label col-sm-2 col-sm-offset-2">
+                   <button class="btn btn-success btn-block save_form_info">保存</button>
+               </div>
+               <div class="control-label col-sm-2">
+                   <button class="btn btn-default btn-block" data-toggle="modal" data-target="#prev_form">预览</button>
+               </div>
+           </div>
+           <div class="form-group" style="position:relative;z-index:200">
+               <div class="control-label col-sm-2 col-sm-offset-10">
+                   <button style="min-width: 78px;" class="btn btn-block btn-default close_form">收起表单</button>
+               </div>
+           </div>
+       </div>
+
+       <div class="col-sm-3 aside">
+           <div class="top_form form-group">
+               <h4>常用栏位</h4>
+               <hr>
+               <div class="row">
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(0);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           公司
+                       </button>
+                   </div>
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(7);">
+                           <span class="glyphicon glyphicon-alert"></span>
+                           年龄
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(1);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           部门
+                       </button>
+                   </div>
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(8);">
+                           <span class="glyphicon glyphicon-alert"></span>
+                           学历
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(2);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           职位
+                       </button>
+                   </div>
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(9);">
+                           <span class="glyphicon glyphicon-alert"></span>
+                           住址
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(3);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           兴趣爱好
+                       </button>
+                   </div>
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(10);">
+                           <span class="glyphicon glyphicon-alert"></span>
+                           月收入
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(4);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           血型
+                       </button>
+                   </div>
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(11);">
+                           <span class="glyphicon glyphicon-alert"></span>
+                           其他
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(5);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           婚姻状况
+                       </button>
+                   </div>
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(12);">
+                           <span class="glyphicon glyphicon-alert"></span>
+                           附件
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-6">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(6);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           性别
+                       </button>
+                   </div>
+               </div>
+           </div>
+           <div class="bottom-form">
+               <h4>自定义栏位</h4>
+               <hr>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(13);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           单行文本框
+                           <span class="glyphicon glyphicon-plus add_plus"></span>
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(14);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           数字输入框
+                           <span class="glyphicon glyphicon-plus add_plus"></span>
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(15);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           日期选择框
+                           <span class="glyphicon glyphicon-plus add_plus"></span>
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(16);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           邮箱输入框
+                           <span class="glyphicon glyphicon-plus add_plus"></span>
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(17);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           多行文本框
+                           <span class="glyphicon glyphicon-plus add_plus"></span>
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(18);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           单选按钮
+                           <span class="glyphicon glyphicon-plus add_plus"></span>
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(19);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           多选按钮
+                           <span class="glyphicon glyphicon-plus add_plus"></span>
+                       </button>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-sm-12">
+                       <button class="btn btn-block btn-default" onClick="add_edit_form(20);">
+                           <span class="glyphicon glyphicon-compressed"></span>
+                           下拉选择框
+                           <span class="glyphicon glyphicon-plus add_plus"></span>
+                       </button>
+                   </div>
+               </div>
+           </div>
+       </div>
+    </div>
+    <!--免费票种-->
+    <div class="form-horizontal set_ticket">
+        <div class="form-group ">
+            <label class="control-label col-sm-2 col-sm-offset-1">
+                <div class="btn btn-success">设置活动票种</div>
+            </label>
+            <div class="col-sm-6 control-label" style="text-align:left;">
+                <i  class="glyphicon glyphicon-info-sign info-sign"></i>
+                <div  class="info-sign-detail o">
+                    <h5>什么是活动票种？</h5>
+                    <ul class="list-group">
+                        <li class="item">1. 主要用于不同价格的报名费或门票或换购提货券，例如可以是套票、优惠票、团体票、限时票等。</li>
+                        <li class="item">2. 如果没有添加票种则活动仅提供免费报名。</li>
+                        <li class="item">3. 您可以给活动添加多个票种，购票人将可根据需要来选购。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="form-group table-header ticket_header">
+            <label class="col-sm-2 control-label">免费票种</label>
+            <div class="col-sm-10">
+                <div class="col-20 text-center">票种名称</div>
+                <div class="col-20 text-center">限额
+                    <i class="glyphicon glyphicon-info-sign info-sign"></i>
+                    <span class="info-sign-detail">
+                                    设置为0表示不限数量（不会超过活动总限额）
+                    </span>
+                </div>
+                <div class="col-20 text-center">价格(元)</div>
+                <div class="col-20 text-center">状态</div>
+                <div class="col-20 text-center">操作</div>
+            </div>
+        </div>
+        <div class="form-group table-header event_free_ticket event_ticket"> <!--免费票种-->
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-10">
+                <div class="col-20 text-center free_ticket">
+                    <span> 免费票 </span>
+                    <input type="hidden" placeholder="免费票">
+                </div>
+                <div class="col-20 text-center ticket_num">
+                    <span> 0 </span>
+                    <input type="hidden" placeholder="0">
+                </div>
+                <div class="col-20 text-center text-danger">免费</div>
+                <div class="col-20 text-center">报名尚未开始</div>
+                <div class="col-10 text-center">
+                    <button class="btn btn-default single">
+                        <span class="glyphicon glyphicon-cog"></span>
+                    </button>
+                </div>
+                <div class="col-10 text-center">
+                    <button class="btn btn-default ticket_delete">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </div>
+                <div class="collapse event_ticket_detail">
+                    <div class="form-inline">
+                        <label class="control-label">票种说明</label>
+                        <input type="text" class="form-control" placeholder="限200汉字" maxlength="200">
+                    </div>
+                    <div class="form-inline">
+                        <label class="control-label">是否审核</label>
+                        <input type="checkbox" class="checkbox">
+                        <span class="text-muted">
+                            凡报名/订购此类票需要经过我审核
+                        </span>
+                    </div>
+                    <div class="form-inline">
+                        <label class="control-label">订购日期</label>
+                        <input type="checkbox" class="checkbox">
+                        <span class="text-muted">
+                            默认为活动结束前
+                        </span>
+                    </div>
+                    <div class="form-inline">
+                        <label class="control-label">有效日期</label>
+                        <input type="checkbox" class="checkbox">
+                        <span class="text-muted">
+                            默认为活动期间内有效
+                        </span>
+                    </div>
+                    <div class="form-inline row">
+                        <div class="col-sm-3 col-sm-offset-3">
+                            <button class="btn btn-success btn-block save_ticket_item">
+                                保存
+                            </button>
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-default btn-block close_ticket_item">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group table-header free_ticket_button">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-10">
+                <div class="col-20">
+                    <button class="btn btn-default btn-block add_free_ticket">
+                        <span class="glyphicon glyphicon-plus text-success"></span>
+                        免费票种
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!--收费票种-->
+        <div class="form-group table-header ticket_header">
+            <label class="col-sm-2 control-label">收费票种</label>
+            <div class="col-sm-10">
+                <div class="col-20 text-center">票种名称</div>
+                <div class="col-20 text-center">限额
+                    <i class="glyphicon glyphicon-info-sign info-sign"></i>
+                    <span class="info-sign-detail">
+                                    设置为0表示不限数量（不会超过活动总限额）
+                    </span>
+                </div>
+                <div class="col-20 text-center">价格(元)</div>
+                <div class="col-20 text-center">状态</div>
+                <div class="col-20 text-center">操作</div>
+            </div>
+        </div>
+        <div class="form-group table-header event_charge_ticket event_ticket">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-10">
+                <div class="col-20 text-center free_ticket">
+                    <span> 收费票 </span>
+                    <input type="hidden" placeholder="免费票">
+                </div>
+                <div class="col-20 text-center ticket_num">
+                    <span> 不限 </span>
+                    <input type="hidden" placeholder="0">
+                </div>
+                <div class="col-20 text-center text-danger ticket_price">
+                   <span> ¥0.01RMB</span>
+                    <input type="hidden" placeholder="0" value="0">
+                </div>
+                <div class="col-20 text-center">暂停发售</div>
+                <div class="col-10 text-center">
+                    <button class="btn btn-default single">
+                        <span class="glyphicon glyphicon-cog"></span>
+                    </button>
+                </div>
+                <div class="col-10 text-center">
+                    <button class="btn btn-default ticket_delete">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </div>
+                <div class="collapse event_ticket_detail">
+                    <div class="form-inline">
+                        <label class="control-label">票种说明</label>
+                        <input type="text" class="form-control" placeholder="限200汉字" maxlength="200">
+                    </div>
+                    <div class="form-inline">
+                        <label class="control-label">套票设置</label>
+                        <select class="form-control">
+                            <option value="">1人票</option>
+                            <option value="">2人票</option>
+                            <option value="">3人票</option>
+                            <option value="">4人票</option>
+                            <option value="">5人票</option>
+                            <option value="">10人票</option>
+                        </select>
+                        <label class="control-label" style="width:15%;">订购限制</label>
+                        <label class="control-label" style="width:15%;">单次订购至少</label>
+                        <select class="form-control">
+                            <option value="">1</option>
+                            <option value="">2</option>
+                            <option value="">3</option>
+                            <option value="">4</option>
+                            <option value="">5</option>
+                            <option value="">6</option>
+                            <option value="">7</option>
+                            <option value="">8</option>
+                            <option value="">9</option>
+                            <option value="">10</option>
+                        </select>
+                        <label class="control-label">最多</label>
+                        <select class="form-control">
+                            <option value="">1</option>
+                            <option value="">2</option>
+                            <option value="">3</option>
+                            <option value="">4</option>
+                            <option value="">5</option>
+                            <option value="">6</option>
+                            <option value="">7</option>
+                            <option value="">8</option>
+                            <option value="">9</option>
+                            <option value="">10</option>
+                        </select>
+                        <label class="control-label">张</label>
+                    </div>
+                    <div class="form-inline">
+                        <label class="control-label">是否审核</label>
+                        <input type="checkbox" class="checkbox">
+                        <span class="text-muted">
+                            凡报名/订购此类票需要经过我审核
+                        </span>
+                    </div>
+                    <div class="form-inline">
+                        <label class="control-label">订购日期</label>
+                        <input type="checkbox" class="checkbox">
+                        <span class="text-muted">
+                            默认为活动结束前
+                        </span>
+                    </div>
+                    <div class="form-inline">
+                        <label class="control-label">有效日期</label>
+                        <input type="checkbox" class="checkbox">
+                        <span class="text-muted">
+                            默认为活动期间内有效
+                        </span>
+                    </div>
+                    <div class="form-inline row">
+                        <div class="col-sm-3 col-sm-offset-3">
+                            <button class="btn btn-success btn-block save_ticket_item">
+                                保存
+                            </button>
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-default btn-block close_ticket_item">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group table-header">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-10">
+                <div class="col-20">
+                    <button class="btn btn-default btn-block add_charge_ticket">
+                        <span class="glyphicon glyphicon-plus text-danger"></span>
+                        收费票种
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="prev_form" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">预览活动表单</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-2 text-right">
+                        <h5 >联系方式</h5>
+                    </div>
+                </div>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">姓名</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="登录用户的姓名或昵称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">手机号</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="登录用户的手机号">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">邮箱</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" placeholder="登录用户的电子邮箱">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 text-right">
+                        <h5 >其他</h5>
+                    </div>
+                </div>
+                <div id="other_form" class="form-horizontal">
+                    <div class="form-group">
+                        <div class="control-label col-sm-9 col-sm-offset-1">
+                            <p>未添加其他栏位（即不需要报名/购票人提供额外信息）。</p>
+                        </div>
+                    </div>
+                   <!-- &lt;!&ndash; select&ndash;&gt;
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">下拉</label>
+                        <div class="col-sm-8">
+                            <select  class="form-control">
+                                <option value="123">123</option>
+                                <option value="123">123</option>
+                                <option value="123">123</option>
+                                <option value="123">123</option>
+                                <option value="123">123</option>
+                            </select>
+                        </div>
+                    </div>
+                    &lt;!&ndash;radio&ndash;&gt;
+                    <div class="form-group">
+                        <label  class="control-label col-sm-2">单选</label>
+                        <div class="col-sm-8">
+                            <label class="radio-inline">
+                                <input type="radio" name="1" value="male" > male
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="1" value="male" > male
+                            </label>
+                        </div>
+                    </div>
+                    &lt;!&ndash;textarea&ndash;&gt;
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">textarea</label>
+                        <div class="col-sm-8">
+                            <textarea value="hahha" cols="30" rows="10" class="form-control"></textarea>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/><br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/><br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<!-- Modal -->
+<div class="modal fade" id="modal" role="dialog" >
+    <div class="modal-dialog" style="width:800px;margin-top:37px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" style="font-size:30px;"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body" style="">
+                <div class="jcrop-holder" style="">
+                    <div class="jcrop-tracker" id="myImg">
+                        <img src="" id="img">
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <label for="my_file" class="pull-right btn btn-success " id="refresh">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                    重新上传
+                </label>
+                <div class="pull-left">
+                    <input type="hidden" class="x1">
+                    <input type="hidden" class="y1">
+                    <input type="hidden" class="x2">
+                    <input type="hidden" class="y2">
+                    <input type="hidden" class="width_pre">
+                    <input type="hidden" class="height_pre">
+                    <button class="btn btn-success btn-lg confirm">确定</button>
+                    <button class="btn btn-lg btn-create-default cancel" data-dismiss="modal">取消</button>
+                </div>
+               </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/jquery-1.11.3.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/distpicker.js"></script>
+<script src="js/jquery.datetimepicker.full.min.js"></script>
+<script src="js/image-select-area.js"></script>
+<script src="ueditor/ueditor.config.js"></script>
+<script src="ueditor/ueditor.all.min.js"></script>
+<script src="ueditor/lang/zh-cn/zh-cn.js"></script>
+<script src="js/jquery-1-7.js"></script>
+<script src="js/create_form.js"></script>
+<script>
+    $("#distpicker").distpicker({
+        province: '山西省',
+        city: '太原市',
+        district: '小店区'
+    });
+
+    // 百度地图API功能
+    function G(id) {
+        return document.getElementById(id);
+    }
+
+    //获得三联菜单的地址
+    var map = new BMap.Map("allmap");
+
+    var selectPos = "山西";
+    var selecCity = "太原";
+    $("#province").change(function(){
+        selectPos = "";
+        selectPos += $(this).val() ;
+        map.centerAndZoom(selectPos,15);
+    });
+
+    $("#city").change(function(){
+        selecCity = "";
+        selecCity += $(this).val();
+        console.log("city ",selectPos+selecCity);
+        map.centerAndZoom(selectPos+selecCity,15);
+    });
+
+
+                       // 初始化地图,设置城市和地图级别。
+    map.centerAndZoom(selectPos,15);
+    var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
+    var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
+    var top_right_navigation = new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}); //右上角，仅包含平移和缩放按钮
+
+    //添加控件和比例尺
+    map.addControl(top_left_control);
+    map.addControl(top_left_navigation);
+    map.addControl(top_right_navigation);
+
+    var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+        {"input" : "suggestId"
+            ,"location" : map
+        });
+
+    ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+        var str = "";
+        var _value = e.fromitem.value;
+        var value = "";
+        if (e.fromitem.index > -1) {
+            value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+        }
+        str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+
+        value = "";
+        if (e.toitem.index > -1) {
+            _value = e.toitem.value;
+            value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+        }
+        str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+        G("searchResultPanel").innerHTML = str;
+    });
+
+    var myValue;
+    ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+        var _value = e.item.value;
+        myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+        G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+
+        setPlace();
+    });
+
+    function setPlace(){
+        map.clearOverlays();    //清除地图上所有覆盖物
+        function myFun(){
+            var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+            map.centerAndZoom(pp, 18);
+            map.addOverlay(new BMap.Marker(pp));    //添加标注
+        }
+        var local = new BMap.LocalSearch(map, { //智能搜索
+            onSearchComplete: myFun
+        });
+
+        var point = myValue;
+        var marker = new BMap.Marker(point);  // 创建标注
+        map.addOverlay(marker);               // 将标注添加到地图中
+        marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+
+        local.search(myValue);
+
+
+    }
+
+    $("#activePos").on("focus","#suggestId",function(){
+        $("#allmap").css("display","block");
+    });
+    $("#activePos").on("blur","#suggestId",function(){
+        $("#allmap").css("display","none");
+    });
+
+    //日期选择
+
+    $(function(){
+        $('#datePickerStart').datetimepicker({
+            format:'Y/m/d',
+            onShow:function( ct ){
+                this.setOptions({
+                    maxDate:jQuery('#datePickerEnd').val()?jQuery('#datePickerEnd').val():false
+                })
+            },
+            timepicker:false
+        });
+        $('#datePickerEnd').datetimepicker({
+            format:'Y/m/d',
+            onShow:function( ct ){
+                this.setOptions({
+                    minDate:jQuery('#datePickerStart').val()?jQuery('#datePickerStart').val():false
+                })
+            },
+            timepicker:false
+        });
+
+        $('#timePickerStart').datetimepicker({
+            datepicker:false,
+            format:'H:i'
+        });
+        $('#timePickerEnd').datetimepicker({
+            datepicker:false,
+            format:'H:i'
+        });
+    });
+
+    //模态框隐藏后立即触发
+    $('#modal').on('hidden.bs.modal', function (e) {
+        option.autoHide = true;
+        $('#img').imgAreaSelect(option);
+        option.autoHide = false;
+    });
+
+    //上传图片并预览
+    var option = {
+        handles:true,
+        fadeSpeed:200,
+        //autoHide:true,
+        hide:true,
+        onSelectEnd:preview
+    };
+
+    var telSrc = "";
+
+    function preview(img,selection) {
+
+        $(".x1").val(selection.x1);
+        $(".y1").val(selection.y1);
+        $(".x2").val(selection.x2);
+        $(".y2").val(selection.y2);
+        $(".width_pre").val(selection.width);
+        $(".height_pre").val(selection.height);
+        telSrc = $(img).attr("src");
+    }
+
+    $("#my_file").change(function(){
+        var file = this.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e){
+            var url = reader.result;
+            //图片等比缩放
+            var createCanvas = document.createElement("canvas");
+            var container_width = $("#myImg").width();
+            var container_height = $("#myImg").height();
+            createCanvas.width = container_width;
+            createCanvas.height = container_height;
+
+            var ctx = createCanvas.getContext("2d");
+
+            var img = new Image();
+            img.src = url;
+
+            img.onload = function () {
+                ctx.drawImage(img,0,0,container_width,container_height);
+                $("#img").attr("src",createCanvas.toDataURL());
+            }
+
+            $("#modal").modal("show");
+
+            $('#img').imgAreaSelect(option);
+
+        }
+        reader.readAsDataURL(file);
+
+        this.value = ""; //解决俩次上传同一张图片
+    });
+
+
+    //点击确定把截图数据传给后台，前台显示浏览图
+    $(".confirm").click(function(){
+        var x1 = $(".x1").val();
+        var y1 = $(".y1").val();
+        var x2 = $(".x2").val();
+        var y2 = $(".y2").val();
+        var width_pre = $(".width_pre").val();
+        var height_pre = $(".height_pre").val();
+
+        var sx = $(".x1").val();
+        var sy = $(".y1").val();
+        var swidth = $(".width_pre").val();
+        var sheight = $(".height_pre").val();
+        var telImg = $("#target img");
+
+        var canvas = document.createElement("canvas");
+
+        canvas.width = swidth > telImg.width() ? telImg.width() : swidth;
+        canvas.height = sheight > telImg.height() ? telImg.height() : sheight;
+
+        var ctx = canvas.getContext("2d");
+        var image = new Image();
+        image.src= telSrc;
+        ctx.drawImage(image,sx,sy,swidth,sheight,0,0,swidth,sheight);
+
+        if($(".x1").val().length != 0){
+
+            $("#target img").attr("src",canvas.toDataURL());
+            $(".upload_img").text("重新上传");
+        }
+
+        option.autoHide = true;
+        $('#img').imgAreaSelect(option);
+        option.autoHide = false;
+        $("#modal").modal("hide");
+
+
+    });
+    //点击取消添加autoHide
+    $(".cancel").click(function(){
+        option.autoHide = true;
+        $('#img').imgAreaSelect(option);
+        option.autoHide = false;
+
+        $("#target").children("canvas").remove();
+        $("#target").children("img").removeClass("hide");
+    });
+
+    // 提示信息
+    $(".info-sign").mouseenter(function(){
+        $(this).siblings(".info-sign-detail").css({"opacity":1,'visibility':"visible"});
+    }).mouseleave(function () {
+        $(this).siblings(".info-sign-detail").css({"opacity":0,'visibility':'hidden'});
+    });
+
+    //添加标签
+    function oneChose(selector,fromE){
+
+        selector.on("click","ul li",function(){
+
+            var bool = $(this).siblings(".active").length;
+
+            if(bool){
+                return;
+            }else{
+                if($(this).hasClass("active"))  return;
+                $(this).addClass("active");
+               var text =  $(this).html();
+               var $li = $(`
+                    <li data-from="${fromE}">${text}
+                        <span class="glyphicon glyphicon-remove-circle remove_item"></span>
+                    </li>
+                `);
+
+                $(".selectClick").append($li);
+
+            }
+
+        });
+    }
+    oneChose($("#category_box .topUl"),".topUl");
+    oneChose($("#category_box .bottomUl"),".bottomUl");
+    
+    //only one display
+    function is_collapse(selector,isSibling){
+        selector.on("click",".single",function(){
+
+                if(isSibling){
+                    var bool = $(this).parent().siblings(".collapse").hasClass("in");
+                    var p_bool = $(this).parent().siblings(".ticket_price").length;
+                    var ticket_num = $(this).parent().siblings(".ticket_num").children("input");
+                    var free_ticket = $(this).parent().siblings(".free_ticket").children("input");
+
+                    if(p_bool > 0 ){
+                        var ticket_price = $(this).parent().siblings(".ticket_price").children("input");
+                    }
+                    if(bool){
+                        $(this).parent().siblings(".collapse").removeClass("in");
+                        var text = ticket_num.val();
+                        var num =  free_ticket.val();
+                        if(p_bool > 0 ){
+                            var price = ticket_price.val();
+//                            console.log(price);
+                        }
+
+                        ticket_num.attr("type","hidden");
+                        ticket_num.siblings("span").css("display","block")
+                            .html(text || "0");
+                        free_ticket.attr("type","hidden");
+                        free_ticket.siblings("span").css("display","block")
+                            .html(num || "免费票");
+                        if(p_bool > 0 ){
+                            ticket_price.attr("type","hidden");
+                            ticket_price.siblings("span").css("display","block")
+                                .html(price || "0");
+                        }
+                    }else{
+                        $(".collapse").removeClass("in")
+                        $(this).parent().siblings(".collapse").addClass("in");
+                        $(this).parent().siblings(".ticket_num")
+                            .children("input").attr("type","text")
+                            .siblings("span").css("display","none");
+                        $(this).parent().siblings(".free_ticket")
+                            .children("input").attr("type","text")
+                            .siblings("span").css("display","none");
+
+                        if(p_bool > 0 ){
+                            $(this).parent().siblings(".ticket_price")
+                                .children("input").attr("type","text")
+                                .siblings("span").css("display","none");
+                        }
+                    }
+            }else{
+                var bool = $(this).siblings(".collapse").hasClass("in");
+
+                if(bool){
+                    $(this).siblings(".collapse").removeClass("in");
+                }else{
+                    $(".collapse").removeClass("in")
+                    $(this).siblings(".collapse").addClass("in");
+                }
+            }
+        });
+    }
+
+    is_collapse($(".act_items"));
+    is_collapse($(".set_ticket"),"true");
+
+
+    $("#category_item_box").on("click","ul li",function(){
+
+        var n = $(this).parent().children(".active").length;
+        if(n >=5 ) return;
+        else{
+            $(this).addClass("active");
+            var text =  $(this).html();
+            var idx = $(this).index();
+            var $li = $(`
+                    <li data-idx="${idx}">${text}
+                        <span class="glyphicon glyphicon-remove-circle remove_item"></span>
+                    </li>
+                `);
+
+            $(".itemClick").append($li);
+        };
+    });
+
+    //close item
+    function closeItem(selector,isOne) {
+
+        selector.on("click",".remove_item",function () {
+            if(isOne){
+                var fromUrl = $(this).parent().data("from");
+                $(this).parent().remove();
+                $(fromUrl).find("li.active").removeClass("active");
+            }else{
+                var idx = $(this).parent().data("idx");
+                console.log(idx);
+                $(this).parent().remove();
+                $("#category_item_box").find("li:eq("+idx+")").removeClass("active");
+            }
+        });
+    }
+    closeItem($(".selectClick"),true);
+    closeItem($(".itemClick"));
+
+
+    //实例化编辑器
+    //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+    var ue = UE.getEditor('editor');
+
+    //点击设置报名表单显示
+    $(".set_form").click(function(){
+        var ele = $(".set_form_content");
+        var bool = ele.hasClass("active");
+        if(!bool){
+            ele.addClass("active");
+            $(this).css("display","none");
+        }
+    });
+    $(".close_form").click(function(){
+        var ele = $(".set_form_content");
+        var bool = ele.hasClass("active");
+        if(bool){
+            ele.removeClass("active");
+            $(".form-horizontal.set_form").css("display","block");
+        }
+    });
+    // 保存自定义表单
+    $(".save_form_info").click(function(){
+        var form_user = $("#prev_form .modal-body").clone(true);
+        $("body").append(form_user);
+    });
+    
+    // 删除ticket_delete
+    $(".set_ticket").on("click",".ticket_delete",function () {
+        var bool = confirm("确认删除该票种？");
+        var len_free = $(".set_ticket .event_free_ticket").length;
+        var len_charge = $(".event_charge_ticket").length;
+        if(bool){
+            if(len_free < 1 || len_charge < 1){
+                alert("活动报名至少需要一个票种，该票种不能删除")
+            }else{
+                $(this).parents(".table-header.event_ticket").remove();
+            }
+        }
+
+    });
+    //点击添加票种
+    var add_ticket = "",add_charge_ticket = "";
+    $(document).ready(function(){
+        add_ticket = $(".set_ticket").children(".event_free_ticket").html();
+        add_charge_ticket = $(".set_ticket").children(".event_charge_ticket").html()
+    });
+
+    function add_ticket_fun(selector,arg){
+        var lit_selector = "";
+       selector.click(function(){
+            if(arg == "free") {
+                var tpl = '<div class="form-group table-header event_free_ticket event_ticket">';
+                tpl += add_ticket;
+                tpl += "</div>";
+
+                lit_selector = ".event_free_ticket";
+
+            }else if(arg == "charge"){
+                var tpl = '<div class="form-group table-header event_charge_ticket event_ticket">';
+                tpl += add_charge_ticket;
+                tpl += "</div>";
+
+                lit_selector = ".event_charge_ticket";
+
+            }
+
+            $(this).parents(".table-header").before(tpl);
+
+            //在添加之前移除所有
+            $(".table-header").find(".collapse.event_ticket_detail").removeClass("in");
+            var ticket_num = $(".table-header").find(".ticket_num").children("input");
+            var free_ticket = $(".table-header").find(".free_ticket").children("input");
+
+            if(arg == "charge"){
+                var ticket_price = $(".table-header").find(".ticket_price").children("input");
+                ticket_price.attr("type","hidden");
+            }
+
+            ticket_num.attr("type","hidden");
+            free_ticket.attr("type","hidden");
+
+
+            $(".table-header").find(".ticket_num").children("span").html(ticket_num.val() || "0").css("display","block");
+            $(".table-header").find(".free_ticket").children("span").html(free_ticket.val() || "免费票").css("display","block");
+
+            if(arg == "charge") {
+                $(".table-header").find(".ticket_price").children("span").html(ticket_price.val() || "0").css("display","block");
+            }
+
+            var idx = $(`.table-header${lit_selector}`).length;
+
+            var cur_collapse = $(`.table-header${lit_selector}`).eq(idx-1).find(".collapse.event_ticket_detail");
+            // 添加之后 再加上class
+
+            cur_collapse.addClass("in");
+            cur_collapse.siblings(".ticket_num").children("input").attr("type","text");
+            cur_collapse.siblings(".free_ticket").children("input").attr("type","text");
+
+
+            if(arg == "charge") {
+                cur_collapse.siblings(".ticket_price").children("input").attr("type","text");
+                cur_collapse.siblings(".ticket_price").children("span").css("display","none");
+            }
+
+            cur_collapse.siblings(".ticket_num").children("span").css("display","none");
+            cur_collapse.siblings(".free_ticket").children("span").css("display","none");
+
+
+        });
+    }
+    add_ticket_fun($(".add_free_ticket"),"free");
+    add_ticket_fun($(".add_charge_ticket"),"charge");
+
+
+    //点击保存 发起请求， 点击关闭 收起 填写票选项
+    $(".set_ticket").on("click",".save_ticket_item",function(){
+            alert("发送数据到后端...");
+    });
+    $(".set_ticket").on("click",".close_ticket_item",function(){
+        var ticket_num = $(this).parents(".table-header").find(".ticket_num").children("input");
+        var free_ticket = $(this).parents(".table-header").find(".free_ticket").children("input");
+        var ticket_price = $(this).parents(".table-header").find(".ticket_price").children("input");
+        var num = ticket_num.val();
+        var text = free_ticket.val();
+        var price = ticket_price.val();
+        ticket_num.siblings("span").html( num || "0").css("display","block");
+        free_ticket.siblings("span").html(text || "免费票" ).css("display","block");
+        ticket_price.siblings("span").html( price || "0").css("display","block");
+        ticket_num.attr("type","hidden");
+        free_ticket.attr("type","hidden");
+        ticket_price.attr("type","hidden");
+        $(this).parents(".collapse").removeClass("in");
+    });
+
+</script>
+</body>
+</html>
